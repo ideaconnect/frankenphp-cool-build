@@ -7,7 +7,7 @@ on:
 
 jobs:
   push_development_to_registry:
-    name: Push Docker (AMD64) image to Docker Hub
+    name: Push Docker (AMD64, ARM64) image to Docker Hub
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -64,5 +64,4 @@ jobs:
           context: production
           file: ./production/Dockerfile
           push: true
-          platforms: linux/arm64/v8,linux/amd64
           tags: ${{ vars.DOCKER_PROJECT }}:production
