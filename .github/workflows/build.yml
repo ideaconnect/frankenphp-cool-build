@@ -7,7 +7,7 @@ on:
 
 jobs:
   push_development_to_registry:
-    name: Push Docker (AMD64, ARM64) image to Docker Hub
+    name: Build development images
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -41,7 +41,7 @@ jobs:
           tags: ${{ vars.DOCKER_PROJECT }}:development
 
   push_async_to_registry:
-    name: Push Docker (AMD64, ARM64) image to Docker Hub
+    name: Build dev async images
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -75,7 +75,7 @@ jobs:
           tags: ${{ vars.DOCKER_PROJECT }}:async-runner
 
   push_dev-serverserver_to_registry:
-    name: Push Docker (AMD64) image to Docker Hub (no QEMU)
+    name: Build dev server images
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -102,7 +102,7 @@ jobs:
           tags: ${{ vars.DOCKER_PROJECT }}:dev-server
 
   push_production_to_registry:
-    name: Push Docker (AMD64) image to Docker Hub (no QEMU)
+    name: Build production images
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -129,7 +129,7 @@ jobs:
           tags: ${{ vars.DOCKER_PROJECT }}:production
 
   push_production_custom_to_registry:
-    name: Push Docker with Modules (AMD64) image to Docker Hub (no QEMU)
+    name: Build production images with custom plugins
     runs-on: ubuntu-latest
     permissions:
       packages: write

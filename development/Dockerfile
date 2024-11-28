@@ -1,4 +1,4 @@
-FROM dunglas/frankenphp:1.3-builder-bookworm AS builder
+FROM dunglas/frankenphp:1.2-builder-bookworm AS builder
 
 # Copy xcaddy in the builder image
 COPY --from=caddy:builder /usr/bin/xcaddy /usr/bin/xcaddy
@@ -18,7 +18,7 @@ RUN xcaddy build \
 
 
 # Replace the official binary by the one contained your custom modules
-FROM dunglas/frankenphp:1.3-bookworm AS runner
+FROM dunglas/frankenphp:1.2-bookworm AS runner
 COPY --from=builder /usr/local/bin/frankenphp /usr/local/bin/frankenphp
 
 ARG USER=runner
