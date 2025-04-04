@@ -9,7 +9,7 @@ RUN apk update
 RUN mkdir /var/log/supervisor
 RUN apk add --no-cache curl zip jq zlib zlib-dev openssh-client git openssh supervisor bash
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
-RUN chmod +x /usr/local/bin/install-php-extensions && install-php-extensions ssh2 intl xml opcache pdo_mysql iconv gmp bcmath zip sockets redis igbinary apcu pcntl amqp gd imagick
+RUN chmod +x /usr/local/bin/install-php-extensions && install-php-extensions ssh2 intl xml opcache pdo_mysql iconv gmp bcmath zip sockets redis igbinary apcu pcntl amqp gd imagick simdjson
 RUN apk add --update nodejs npm
 RUN npm install --global yarn
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
