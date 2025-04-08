@@ -1,4 +1,4 @@
-FROM dunglas/frankenphp:1.2-bookworm
+FROM dunglas/frankenphp:1.5.0-builder-php8.4.5-bookworm AS builder
 
 ARG USER=runner
 WORKDIR /app

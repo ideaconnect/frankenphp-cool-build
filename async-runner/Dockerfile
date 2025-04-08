@@ -1,4 +1,4 @@
-FROM php:8.3-cli-alpine3.20
+FROM php:8.4-cli-alpine3.21
 ENV HOME=/cache
 VOLUME "/app"
 VOLUME "/cache"
