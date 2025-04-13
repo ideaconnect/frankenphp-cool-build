@@ -13,7 +13,7 @@ RUN chmod +x /usr/local/bin/install-php-extensions && install-php-extensions ssh
 RUN apk add --update nodejs npm
 RUN npm install --global yarn
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-RUN echo 'memory_limit=2048M' > /usr/local/etc/php/conf.d/memory_limit.ini
+RUN echo 'memory_limit=1024M' > /usr/local/etc/php/conf.d/memory_limit.ini
 RUN echo 'default_socket_timeout=-1' > /usr/local/etc/php/conf.d/timeouts.ini
 RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.alpine.sh' | bash
 RUN apk add symfony-cli

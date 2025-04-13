@@ -6,7 +6,7 @@ on:
   workflow_dispatch: ~
 
 jobs:
-  push_development_to_registry:
+  push_development_to_registry_amd64:
     name: Build development images
     runs-on: ubuntu-latest
     permissions:
@@ -15,9 +15,6 @@ jobs:
       attestations: write
       id-token: write
     steps:
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -37,7 +34,7 @@ jobs:
           context: development
           file: ./development/Dockerfile
           push: true
-          platforms: linux/arm64/v8,linux/amd64
+          platforms: linux/amd64
           tags: ${{ vars.DOCKER_PROJECT }}:development
 
   push_async_to_registry:
