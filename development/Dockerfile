@@ -1,4 +1,4 @@
-FROM dunglas/frankenphp:1.9.0-builder-php8.4-bookworm AS builder
+FROM dunglas/frankenphp:1.8.0-builder-php8.4-bookworm AS builder
 
 # Copy xcaddy in the builder image
 COPY --from=caddy:builder /usr/bin/xcaddy /usr/bin/xcaddy
