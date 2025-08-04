@@ -15,12 +15,15 @@ RUN xcaddy build \
 	--with github.com/WeidiDeng/caddy-cloudflare-ip
 	# Add extra Caddy modules here
 
-
 # Replace the official binary by the one contained your custom modules
 FROM dunglas/frankenphp:1.9-bookworm AS runner
 COPY --from=builder /usr/local/bin/frankenphp /usr/local/bin/frankenphp
 
-ARG USER=runner
+ENV HOST_USER_ID=1000
+ENV GODEBUG=cgocheck=0
+ENV GOMEMLIMIT=512M
+
+ARG USER=${HOST_USER_ID}
 WORKDIR /app
 VOLUME /etc/secrets
 VOLUME /var/applog
@@ -35,5 +38,5 @@ RUN \
 
 RUN echo 'memory_limit=512M' >> /usr/local/etc/php/conf.d/memory-limit.ini
 RUN install-php-extensions yaml bcmath gmp mbstring pdo_mysql gd redis igbinary opcache gd excimer zip filter openssl ctype amqp session dom xml tokenizer simplexml curl simdjson
-RUN apt update && apt install -y wkhtmltopdf
+RUN apt update && apt install -y wkhtmltopdf zip unzip vim
 USER ${USER}

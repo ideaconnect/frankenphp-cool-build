@@ -18,8 +18,11 @@ RUN xcaddy build \
 FROM dunglas/frankenphp:1.9-bookworm AS runner
 COPY --from=builder /usr/local/bin/frankenphp /usr/local/bin/frankenphp
 
-ARG USER=runner
+ENV HOST_USER_ID=1000
+ENV GODEBUG=cgocheck=0
+ENV GOMEMLIMIT=512M
 
+ARG USER=${HOST_USER_ID}
 WORKDIR /app
 VOLUME /etc/secrets
 VOLUME /var/applog
@@ -40,6 +43,6 @@ RUN echo 'xdebug.client_host=host.docker.internal' >> /usr/local/etc/php/conf.d/
 RUN echo 'xdebug.start_with_request=yes' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 RUN echo 'xdebug.log=/tmp/xdebug.log' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 RUN echo 'memory_limit=512M' >> /usr/local/etc/php/conf.d/memory-limit.ini
-
+RUN apt update && apt install -y wkhtmltopdf zip unzip vim
 RUN mkdir /etc/secrets && echo 'dummy' > /etc/secrets/dev.key
 USER ${USER}
