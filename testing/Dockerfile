@@ -21,9 +21,7 @@ COPY --from=builder /usr/local/bin/frankenphp /usr/local/bin/frankenphp
 ENV GODEBUG=cgocheck=0
 ENV GOMEMLIMIT=512M
 
-ENV HOST_USER_ID=1000
-
-ARG USER=${HOST_USER_ID}
+ARG USER=1000
 WORKDIR /app
 VOLUME /etc/secrets
 VOLUME /var/applog

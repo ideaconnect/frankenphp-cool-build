@@ -1,7 +1,6 @@
 FROM php:8.4-cli-alpine3.22
-ENV HOST_USER_ID=1000
 
-ARG USER=${HOST_USER_ID}
+ARG USER=1000
 
 ENV HOME=/cache
 VOLUME "/app"

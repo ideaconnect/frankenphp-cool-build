@@ -1,8 +1,6 @@
 FROM php:8.4-cli-alpine3.22
 
-ENV HOST_USER_ID=1000
-
-ARG USER=${HOST_USER_ID}
+ARG USER=1000
 
 RUN mkdir /cache
 RUN mkdir /app
@@ -10,8 +8,8 @@ RUN mkdir /app
 VOLUME /cache
 VOLUME /app
 
-RUN chown -R 1000:1000 /app
-RUN chown -R 1000:1000 /cache
+RUN chown -R ${USER}:${USER} /app
+RUN chown -R ${USER}:${USER} /cache
 
 ENV HOME=/cache
 ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
