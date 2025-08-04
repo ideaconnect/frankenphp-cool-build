@@ -20,7 +20,7 @@ COPY --from=builder /usr/local/bin/frankenphp /usr/local/bin/frankenphp
 
 ARG USER=1000
 ENV GODEBUG=cgocheck=0
-ENV GOMEMLIMIT=512M
+ENV GOMEMLIMIT=512MiB
 
 WORKDIR /app
 VOLUME /etc/secrets

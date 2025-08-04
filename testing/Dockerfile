@@ -19,7 +19,7 @@ FROM dunglas/frankenphp:1.8-bookworm AS runner
 COPY --from=builder /usr/local/bin/frankenphp /usr/local/bin/frankenphp
 
 ENV GODEBUG=cgocheck=0
-ENV GOMEMLIMIT=512M
+ENV GOMEMLIMIT=512MiB
 
 ARG USER=1000
 WORKDIR /app
