@@ -28,8 +28,8 @@ VOLUME /etc/secrets
 VOLUME /var/applog
 VOLUME /etc/caddy/
 RUN \
-        groupadd -g 1000 runner; \
-        useradd ${USER} -u 1000 -g 1000; \
+        groupadd -g ${USER} runner; \
+        useradd runner -u ${USER} -g ${USER}; \
         # Add additional capability to bind to port 80 and 443
         setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/frankenphp; \
         # Give write access to /data/caddy and /config/caddy
