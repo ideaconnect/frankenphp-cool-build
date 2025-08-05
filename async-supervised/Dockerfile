@@ -22,3 +22,4 @@ RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.alpine.sh' 
 RUN apk add symfony-cli
 RUN chown -R ${USER}:${USER} /cache
 USER ${USER}
+CMD ["/usr/bin/supervisord"]

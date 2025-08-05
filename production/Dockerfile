@@ -13,7 +13,6 @@ RUN xcaddy build \
 	--with github.com/dunglas/mercure/caddy \
 	--with github.com/dunglas/vulcain/caddy \
 	--with github.com/WeidiDeng/caddy-cloudflare-ip
-	# Add extra Caddy modules here
 
 # Replace the official binary by the one contained your custom modules
 FROM dunglas/frankenphp:1.8-bookworm AS runner
