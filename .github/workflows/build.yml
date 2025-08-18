@@ -37,7 +37,7 @@ jobs:
           context: development
           file: ./development/Dockerfile
           push: true
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           tags: ${{ vars.DOCKER_PROJECT }}:development
 
   push_async-supervised_to_registry:
@@ -71,7 +71,7 @@ jobs:
           context: async-supervised
           file: ./async-supervised/Dockerfile
           push: true
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           tags: ${{ vars.DOCKER_PROJECT }}:async-supervised
 
   push_testing_to_registry:
