@@ -126,6 +126,7 @@ jobs:
           context: builder
           file: ./builder/Dockerfile
           push: true
+          platforms: linux/amd64,linux/arm64
           tags: ${{ vars.DOCKER_PROJECT }}:builder
 
   push_production_to_registry:
