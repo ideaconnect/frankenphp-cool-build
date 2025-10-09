@@ -1,4 +1,4 @@
-FROM dunglas/frankenphp:1.8.0-builder-php8.4-bookworm AS builder
+FROM dunglas/frankenphp:1.9.0-builder-php8.4-bookworm AS builder
 
 # Copy xcaddy in the builder image
 COPY --from=caddy:builder /usr/bin/xcaddy /usr/bin/xcaddy
@@ -16,7 +16,7 @@ RUN xcaddy build \
 	# Add extra Caddy modules here
 
 # Replace the official binary by the one contained your custom modules
-FROM dunglas/frankenphp:1.8-bookworm AS runner
+FROM dunglas/frankenphp:1.9-bookworm AS runner
 COPY --from=builder /usr/local/bin/frankenphp /usr/local/bin/frankenphp
 
 ENV GODEBUG=cgocheck=0
