@@ -3,9 +3,24 @@ FROM dunglas/frankenphp:1.9.0-builder-php8.4-bookworm AS builder
 # Copy xcaddy in the builder image
 COPY --from=caddy:builder /usr/bin/xcaddy /usr/bin/xcaddy
 
+# Set Go build environment optimizations
+ENV GOCACHE=/go-cache
+ENV GOMODCACHE=/go-mod-cache
+ENV GOPROXY=https://proxy.golang.org,direct
+ENV GOSUMDB=sum.golang.org
+
+# Create cache directories and optimize Go settings
+RUN mkdir -p /go-cache /go-mod-cache && \
+    go env -w GOCACHE=/go-cache && \
+    go env -w GOMODCACHE=/go-mod-cache && \
+    go env -w GOPROXY=https://proxy.golang.org,direct
+
+# Pre-download common dependencies to leverage Docker layer caching
+RUN go mod download github.com/caddyserver/caddy/v2@latest || true
+
 # CGO must be enabled to build FrankenPHP
 RUN CGO_ENABLED=1 \
-XCADDY_GO_BUILD_FLAGS="-ldflags='-w -s' -tags=nobadger,nomysql,nopgx" \
+XCADDY_GO_BUILD_FLAGS="-ldflags='-w -s -extldflags=-static' -trimpath -tags=nobadger,nomysql,nopgx -buildvcs=false" \
 CGO_CFLAGS=$(php-config --includes) \
 CGO_LDFLAGS="$(php-config --ldflags) $(php-config --libs)" \
 xcaddy build \
