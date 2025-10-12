@@ -40,6 +40,6 @@ RUN \
         chown -R ${USER}:${USER} /data/caddy && chown -R ${USER}:${USER} /config/caddy
 
 RUN echo 'memory_limit=512M' >> /usr/local/etc/php/conf.d/memory-limit.ini
-RUN install-php-extensions yaml bcmath gmp mbstring pdo_mysql gd redis igbinary opcache gd excimer zip filter openssl ctype amqp session dom xml tokenizer simplexml curl simdjson
+RUN install-php-extensions yaml bcmath gmp mbstring pdo_mysql gd redis igbinary opcache gd excimer zip filter openssl ctype amqp session dom xml tokenizer simplexml curl simdjson intl
 RUN apt update && apt install -y wkhtmltopdf zip unzip vim
 USER ${USER}

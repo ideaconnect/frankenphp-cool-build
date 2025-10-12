@@ -40,7 +40,7 @@ RUN \
 
 RUN echo 'memory_limit=512M' >> /usr/local/etc/php/conf.d/memory-limit.ini
 
-RUN install-php-extensions yaml bcmath gmp mbstring pdo_mysql gd redis igbinary opcache apcu gd excimer zip filter openssl ctype amqp session dom xml tokenizer simplexml curl simdjson
+RUN install-php-extensions yaml bcmath gmp mbstring pdo_mysql gd redis igbinary opcache apcu gd excimer zip filter openssl ctype amqp session dom xml tokenizer simplexml curl simdjson intl
 
 # Production OPcache configuration (aggressive caching)
 RUN echo 'opcache.enable=1' >> /usr/local/etc/php/conf.d/opcache.ini \

@@ -39,7 +39,7 @@ RUN \
         # Give write access to /data/caddy and /config/caddy
         chown -R ${USER}:${USER} /data/caddy && chown -R ${USER}:${USER} /config/caddy
 
-RUN install-php-extensions yaml bcmath gmp mbstring pdo_mysql gd redis igbinary opcache apcu gd zip filter openssl ctype amqp session dom xml tokenizer simplexml curl xdebug excimer simdjson
+RUN install-php-extensions yaml bcmath gmp mbstring pdo_mysql gd redis igbinary opcache apcu gd zip filter openssl ctype amqp session dom xml tokenizer simplexml curl xdebug excimer simdjson intl
 
 # Xdebug configuration for development
 RUN echo 'xdebug.mode=develop,debug' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
