@@ -16,7 +16,9 @@ ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/relea
 WORKDIR /app
 
 RUN apk update && apk add nodejs npm git zip unzip vim
-RUN corepack enable && corepack prepare yarn@4 --activate
+RUN npm install --global corepack \
+	&& corepack enable \
+	&& corepack prepare yarn@4 --activate
 RUN install-php-extensions yaml bcmath gmp mbstring pdo_mysql gd redis igbinary gd zip filter openssl ctype amqp session dom xml tokenizer simplexml curl ssh2 apcu intl
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 RUN mkdir /etc/secrets && echo 'dummy' > /etc/secrets/dev.key
