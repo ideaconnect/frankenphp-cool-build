@@ -23,7 +23,6 @@ COPY --from=builder /usr/local/bin/frankenphp /usr/local/bin/frankenphp
 
 ARG USER=1000
 ARG XDEBUG_IDEKEY=PHPIDE
-ARG XDEBUG_TRIGGER=PHPIDE
 ARG XDEBUG_CLIENT_HOST=host.docker.internal
 ENV GODEBUG=cgocheck=0
 ENV GOMEMLIMIT=512MiB
@@ -52,8 +51,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Xdebug configuration for development (consolidated)
 RUN echo 'xdebug.mode=develop,debug,coverage' > /usr/local/etc/php/conf.d/xdebug.ini \
     && echo "xdebug.client_host=${XDEBUG_CLIENT_HOST}" >> /usr/local/etc/php/conf.d/xdebug.ini \
-    && echo 'xdebug.start_with_request=trigger' >> /usr/local/etc/php/conf.d/xdebug.ini \
-    && echo "xdebug.trigger_value=${XDEBUG_TRIGGER}" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo 'xdebug.start_with_request=yes' >> /usr/local/etc/php/conf.d/xdebug.ini \
     && echo 'xdebug.log=/tmp/xdebug.log' >> /usr/local/etc/php/conf.d/xdebug.ini \
     && echo 'xdebug.log_level=0' >> /usr/local/etc/php/conf.d/xdebug.ini \
     && echo "xdebug.idekey=${XDEBUG_IDEKEY}" >> /usr/local/etc/php/conf.d/xdebug.ini
