@@ -18,7 +18,7 @@ RUN apk update && apk add --no-cache \
 
 # Step 2: Use ADD --chmod to save a layer
 ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
-RUN install-php-extensions ssh2 intl xml opcache pdo_mysql iconv gmp bcmath zip sockets redis igbinary apcu pcntl gd imagick simdjson
+RUN install-php-extensions ssh2 intl xml opcache pdo_mysql iconv gmp bcmath zip sockets redis igbinary apcu pcntl gd imagick simdjson amqp
 
 # Step 5: Modernize yarn installation via corepack
 RUN npm install --global corepack \
