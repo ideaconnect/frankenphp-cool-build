@@ -1,4 +1,4 @@
-FROM dunglas/frankenphp:1.10.1-builder-php8.5-bookworm AS builder
+FROM dunglas/frankenphp:1.10.1-builder-php8.4-bookworm AS builder
 
 # Copy xcaddy in the builder image
 COPY --from=caddy:builder /usr/bin/xcaddy /usr/bin/xcaddy
@@ -18,7 +18,7 @@ xcaddy build \
 	--with github.com/WeidiDeng/caddy-cloudflare-ip
 
 
-FROM dunglas/frankenphp:1.10.1-bookworm AS runner
+FROM dunglas/frankenphp:1.10.1-php8.4-bookworm AS runner
 COPY --from=builder /usr/local/bin/frankenphp /usr/local/bin/frankenphp
 
 ARG USER=1000
@@ -42,7 +42,7 @@ RUN groupadd -g ${USER} runner \
     && mkdir -p /etc/secrets && echo 'dummy' > /etc/secrets/dev.key
 
 # PHP extensions (removed duplicate gd)
-RUN install-php-extensions yaml bcmath gmp mbstring pdo_mysql gd redis igbinary opcache apcu zip filter openssl ctype session dom xml tokenizer simplexml curl xdebug excimer simdjson intl
+RUN install-php-extensions yaml bcmath gmp mbstring pdo_mysql gd redis igbinary opcache apcu zip filter openssl ctype session dom xml tokenizer simplexml curl xdebug excimer simdjson intl amqp
 
 # System packages with cache cleanup
 RUN apt-get update && apt-get install -y --no-install-recommends \
