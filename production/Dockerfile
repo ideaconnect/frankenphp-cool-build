@@ -38,7 +38,7 @@ RUN groupadd -g ${USER} runner \
     && chown -R ${USER}:${USER} /data/caddy /config/caddy
 
 # PHP extensions (removed duplicate gd)
-RUN install-php-extensions yaml bcmath gmp mbstring pdo_mysql gd redis igbinary opcache apcu excimer zip filter openssl ctype amqp session dom xml tokenizer simplexml curl simdjson intl
+RUN install-php-extensions yaml bcmath gmp mbstring pdo_mysql gd redis igbinary opcache apcu excimer zip filter openssl ctype session dom xml tokenizer simplexml curl simdjson intl
 
 # System packages with cache cleanup (removed vim for production)
 RUN apt-get update && apt-get install -y --no-install-recommends \

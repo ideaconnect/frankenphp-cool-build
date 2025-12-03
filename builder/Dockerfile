@@ -47,7 +47,7 @@ RUN npm install --global corepack \
     && corepack enable \
     && corepack prepare yarn@4 --activate
 
-RUN install-php-extensions yaml bcmath gmp mbstring pdo_mysql gd redis igbinary zip filter openssl ctype amqp session dom xml tokenizer simplexml curl ssh2 apcu intl opcache
+RUN install-php-extensions yaml bcmath gmp mbstring pdo_mysql gd redis igbinary zip filter openssl ctype session dom xml tokenizer simplexml curl ssh2 apcu intl opcache
 
 # Install Composer with version pinning for reproducibility
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer

@@ -42,7 +42,7 @@ RUN groupadd -g ${USER} runner \
     && mkdir -p /etc/secrets && echo 'dummy' > /etc/secrets/dev.key
 
 # PHP extensions (removed duplicate gd)
-RUN install-php-extensions yaml bcmath gmp mbstring pdo_mysql gd redis igbinary opcache apcu zip filter openssl ctype amqp session dom xml tokenizer simplexml curl xdebug excimer simdjson intl
+RUN install-php-extensions yaml bcmath gmp mbstring pdo_mysql gd redis igbinary opcache apcu zip filter openssl ctype session dom xml tokenizer simplexml curl xdebug excimer simdjson intl
 
 # System packages with cache cleanup
 RUN apt-get update && apt-get install -y --no-install-recommends \
