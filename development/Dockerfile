@@ -1,4 +1,4 @@
-FROM dunglas/frankenphp:1.9.0-builder-php8.4-bookworm AS builder
+FROM dunglas/frankenphp:1.10.1-builder-php8.5-bookworm AS builder
 
 # Copy xcaddy in the builder image
 COPY --from=caddy:builder /usr/bin/xcaddy /usr/bin/xcaddy
@@ -18,10 +18,13 @@ xcaddy build \
 	--with github.com/WeidiDeng/caddy-cloudflare-ip
 
 
-FROM dunglas/frankenphp:1.9-bookworm AS runner
+FROM dunglas/frankenphp:1.10.1-bookworm AS runner
 COPY --from=builder /usr/local/bin/frankenphp /usr/local/bin/frankenphp
 
 ARG USER=1000
+ARG XDEBUG_IDEKEY=PHPIDE
+ARG XDEBUG_TRIGGER=PHPIDE
+ARG XDEBUG_CLIENT_HOST=host.docker.internal
 ENV GODEBUG=cgocheck=0
 ENV GOMEMLIMIT=512MiB
 ENV GOMAXPROCS=0
@@ -31,40 +34,53 @@ VOLUME /etc/secrets
 VOLUME /var/applog
 VOLUME /etc/caddy/
 
-RUN \
-        groupadd -g ${USER} runner; \
-        useradd runner -u ${USER} -g ${USER}; \
-        # Add additional capability to bind to port 80 and 443
-        setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/frankenphp; \
-        # Give write access to /data/caddy and /config/caddy
-        chown -R ${USER}:${USER} /data/caddy && chown -R ${USER}:${USER} /config/caddy
+# User setup and permissions
+RUN groupadd -g ${USER} runner \
+    && useradd runner -u ${USER} -g ${USER} \
+    && setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/frankenphp \
+    && chown -R ${USER}:${USER} /data/caddy /config/caddy \
+    && mkdir -p /etc/secrets && echo 'dummy' > /etc/secrets/dev.key
 
-RUN install-php-extensions yaml bcmath gmp mbstring pdo_mysql gd redis igbinary opcache apcu gd zip filter openssl ctype amqp session dom xml tokenizer simplexml curl xdebug excimer simdjson intl
+# PHP extensions (removed duplicate gd)
+RUN install-php-extensions yaml bcmath gmp mbstring pdo_mysql gd redis igbinary opcache apcu zip filter openssl ctype amqp session dom xml tokenizer simplexml curl xdebug excimer simdjson intl
 
-# Xdebug configuration for development
-RUN echo 'xdebug.mode=develop,debug' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-RUN echo 'xdebug.client_host=host.docker.internal' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-RUN echo 'xdebug.start_with_request=yes' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-RUN echo 'xdebug.log=/tmp/xdebug.log' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+# System packages with cache cleanup
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    wkhtmltopdf zip unzip vim \
+    && rm -rf /var/lib/apt/lists/*
 
-# Performance configuration
-RUN echo 'memory_limit=512M' >> /usr/local/etc/php/conf.d/memory-limit.ini
+# Xdebug configuration for development (consolidated)
+RUN echo 'xdebug.mode=develop,debug,coverage' > /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.client_host=${XDEBUG_CLIENT_HOST}" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo 'xdebug.start_with_request=trigger' >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.trigger_value=${XDEBUG_TRIGGER}" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo 'xdebug.log=/tmp/xdebug.log' >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo 'xdebug.log_level=0' >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.idekey=${XDEBUG_IDEKEY}" >> /usr/local/etc/php/conf.d/xdebug.ini
 
-# OPcache configuration for development (less aggressive caching for development)
-RUN echo 'opcache.enable=1' >> /usr/local/etc/php/conf.d/opcache.ini \
+# Memory configuration
+RUN echo 'memory_limit=512M' > /usr/local/etc/php/conf.d/memory-limit.ini
+
+# OPcache configuration for development (file-change aware)
+# validate_timestamps=1 + revalidate_freq=0 = check file mtime on EVERY request
+RUN echo 'opcache.enable=1' > /usr/local/etc/php/conf.d/opcache.ini \
     && echo 'opcache.enable_cli=1' >> /usr/local/etc/php/conf.d/opcache.ini \
     && echo 'opcache.memory_consumption=128' >> /usr/local/etc/php/conf.d/opcache.ini \
     && echo 'opcache.interned_strings_buffer=8' >> /usr/local/etc/php/conf.d/opcache.ini \
-    && echo 'opcache.max_accelerated_files=4000' >> /usr/local/etc/php/conf.d/opcache.ini \
-    && echo 'opcache.revalidate_freq=1' >> /usr/local/etc/php/conf.d/opcache.ini \
+    && echo 'opcache.max_accelerated_files=10000' >> /usr/local/etc/php/conf.d/opcache.ini \
+    && echo 'opcache.revalidate_freq=0' >> /usr/local/etc/php/conf.d/opcache.ini \
     && echo 'opcache.validate_timestamps=1' >> /usr/local/etc/php/conf.d/opcache.ini \
-    && echo 'opcache.save_comments=1' >> /usr/local/etc/php/conf.d/opcache.ini
+    && echo 'opcache.save_comments=1' >> /usr/local/etc/php/conf.d/opcache.ini \
+    && echo 'opcache.fast_shutdown=1' >> /usr/local/etc/php/conf.d/opcache.ini
 
 # APCu configuration for development
-RUN echo 'apc.enabled=1' >> /usr/local/etc/php/conf.d/apcu.ini \
+RUN echo 'apc.enabled=1' > /usr/local/etc/php/conf.d/apcu.ini \
     && echo 'apc.shm_size=64M' >> /usr/local/etc/php/conf.d/apcu.ini \
     && echo 'apc.ttl=7200' >> /usr/local/etc/php/conf.d/apcu.ini \
     && echo 'apc.enable_cli=1' >> /usr/local/etc/php/conf.d/apcu.ini
-RUN apt update && apt install -y wkhtmltopdf zip unzip vim
-RUN mkdir /etc/secrets && echo 'dummy' > /etc/secrets/dev.key
+
+# Realpath cache (lower TTL for development - files change often)
+RUN echo 'realpath_cache_size=4096K' > /usr/local/etc/php/conf.d/realpath.ini \
+    && echo 'realpath_cache_ttl=120' >> /usr/local/etc/php/conf.d/realpath.ini
+
 USER ${USER}
