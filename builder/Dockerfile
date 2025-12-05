@@ -35,26 +35,21 @@ ENV COMPOSER_PROCESS_TIMEOUT=600
 #
 # This persists: Composer packages, npm/yarn cache, and speeds up subsequent builds.
 # ============================================================================
+ARG NODE_VERSION=20
+FROM node:$NODE_VERSION-alpine AS node
+
+COPY --from=node /usr/lib /usr/lib
+COPY --from=node /usr/local/share /usr/local/share
+COPY --from=node /usr/local/lib /usr/local/lib
+COPY --from=node /usr/local/include /usr/local/include
+COPY --from=node /usr/local/bin /usr/local/bin
 
 ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 WORKDIR /app
 
 # System packages with cache cleanup
-RUN apk update && apk add --no-cache git zip unzip vim openssh-client bash curl \
+RUN apk update && apk add --no-cache git zip unzip vim openssh-client nodejs=~20 npm \
     && rm -rf /var/cache/apk/*
-
-# Install nvm and Node.js 20
-ENV NVM_DIR=/usr/local/nvm
-ENV NODE_VERSION=20
-RUN mkdir -p $NVM_DIR \
-    && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash \
-    && . $NVM_DIR/nvm.sh \
-    && nvm install $NODE_VERSION \
-    && nvm use $NODE_VERSION \
-    && nvm alias default $NODE_VERSION
-
-ENV NODE_PATH=$NVM_DIR/versions/node/v$NODE_VERSION/lib/node_modules
-ENV PATH=$NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 
 RUN npm install --global corepack \
     && corepack enable \
