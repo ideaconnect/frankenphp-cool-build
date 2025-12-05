@@ -35,8 +35,7 @@ ENV COMPOSER_PROCESS_TIMEOUT=600
 #
 # This persists: Composer packages, npm/yarn cache, and speeds up subsequent builds.
 # ============================================================================
-ARG NODE_VERSION=20
-FROM node:$NODE_VERSION-alpine AS node
+FROM node:20-alpine AS node
 
 COPY --from=node /usr/lib /usr/lib
 COPY --from=node /usr/local/share /usr/local/share
