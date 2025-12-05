@@ -40,8 +40,21 @@ ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/relea
 WORKDIR /app
 
 # System packages with cache cleanup
-RUN apk update && apk add --no-cache nodejs npm git zip unzip vim openssh-client \
+RUN apk update && apk add --no-cache git zip unzip vim openssh-client bash curl \
     && rm -rf /var/cache/apk/*
+
+# Install nvm and Node.js 20
+ENV NVM_DIR=/usr/local/nvm
+ENV NODE_VERSION=20
+RUN mkdir -p $NVM_DIR \
+    && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash \
+    && . $NVM_DIR/nvm.sh \
+    && nvm install $NODE_VERSION \
+    && nvm use $NODE_VERSION \
+    && nvm alias default $NODE_VERSION
+
+ENV NODE_PATH=$NVM_DIR/versions/node/v$NODE_VERSION/lib/node_modules
+ENV PATH=$NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 
 RUN npm install --global corepack \
     && corepack enable \
