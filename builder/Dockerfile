@@ -35,19 +35,11 @@ ENV COMPOSER_PROCESS_TIMEOUT=600
 #
 # This persists: Composer packages, npm/yarn cache, and speeds up subsequent builds.
 # ============================================================================
-FROM node:20-alpine AS node
-
-COPY --from=node /usr/lib /usr/lib
-COPY --from=node /usr/local/share /usr/local/share
-COPY --from=node /usr/local/lib /usr/local/lib
-COPY --from=node /usr/local/include /usr/local/include
-COPY --from=node /usr/local/bin /usr/local/bin
-
 ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 WORKDIR /app
 
 # System packages with cache cleanup
-RUN apk update && apk add --no-cache git zip unzip vim openssh-client nodejs=~20 npm \
+RUN apk update && apk add --no-cache git zip unzip vim openssh-client nodejs npm \
     && rm -rf /var/cache/apk/*
 
 RUN npm install --global corepack \
